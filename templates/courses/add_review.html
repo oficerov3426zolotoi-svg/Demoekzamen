@@ -1,0 +1,23 @@
+{% extends 'courses/base.html' %}
+
+{% block title %}Отзыв - Учусь.РФ{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Оставить отзыв</h2>
+
+<form method="post">
+    {% csrf_token %}
+    
+    <div class="mb-3">
+        <label for="id_text" class="form-label">Ваш отзыв</label>
+        <textarea name="text" class="form-control {% if form.text.errors %}is-invalid{% endif %}" 
+                  id="id_text" rows="4"></textarea>
+        {% if form.text.errors %}
+            <div class="invalid-feedback">{{ form.text.errors.0 }}</div>
+        {% endif %}
+    </div>
+
+    <button type="submit" class="btn btn-primary">Отправить отзыв</button>
+    <a href="{% url 'cabinet' %}" class="btn btn-secondary">Отмена</a>
+</form>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends 'courses/base.html' %}
+
+{% block title %}Админ панель - Учусь.РФ{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Панель администратора</h2>
+
+{% if applications %}
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Пользователь</th>
+                    <th>Курс</th>
+                    <th>Дата начала</th>
+                    <th>Оплата</th>
+                    <th>Статус</th>
+                    <th>Дата заявки</th>
+                    <th>Изменить статус</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for app in applications %}
+                <tr>
+                    <td>{{ app.id }}</td>
+                    <td>{{ app.user.username }}</td>
+                    <td>{{ app.course.name }}</td>
+                    <td>{{ app.start_date }}</td>
+                    <td>{{ app.get_payment_method_display }}</td>
+                    <td>
+                        {% if app.status == 'new' %}
+                            <span class="badge bg-secondary">Новая</span>
+                        {% elif app.status == 'in_progress' %}
+                            <span class="badge bg-primary">Идет обучение</span>
+                        {% else %}
+                            <span class="badge bg-success">Обучение завершено</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ app.created_at|date:"d.m.Y" }}</td>
+                    <td>
+                        <form method="post" action="{% url 'change_status' app.id %}">
+                            {% csrf_token %}
+                            <select name="status" class="form-select form-select-sm mb-2">
+                                <option value="new" {% if app.status == 'new' %}selected{% endif %}>Новая</option>
+                                <option value="in_progress" {% if app.status == 'in_progress' %}selected{% endif %}>Идет обучение</option>
+                                <option value="completed" {% if app.status == 'completed' %}selected{% endif %}>Завершено</option>
+                            </select>
+                            <button type="submit" class="btn btn-sm btn-primary">Сохранить</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <p class="text-muted">Заявок пока нет</p>
+{% endif %}
+{% endblock %}

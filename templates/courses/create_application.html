@@ -1,0 +1,49 @@
+{% extends 'courses/base.html' %}
+
+{% block title %}Оформление заявки - Учусь.РФ{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Оформление заявки</h2>
+
+<form method="post">
+    {% csrf_token %}
+    
+    <div class="mb-3">
+        <label for="id_course" class="form-label">Выберите курс</label>
+        <select name="course" class="form-select {% if form.course.errors %}is-invalid{% endif %}" id="id_course">
+            <option value="">-- Выберите курс --</option>
+            {% for course in form.course.field.queryset %}
+                <option value="{{ course.id }}">{{ course.name }} ({{ course.get_course_type_display }})</option>
+            {% endfor %}
+        </select>
+        {% if form.course.errors %}
+            <div class="invalid-feedback">{{ form.course.errors.0 }}</div>
+        {% endif %}
+    </div>
+
+    <div class="mb-3">
+        <label for="id_start_date" class="form-label">Дата начала обучения</label>
+        <input type="date" name="start_date" class="form-control {% if form.start_date.errors %}is-invalid{% endif %}" 
+               id="id_start_date">
+        {% if form.start_date.errors %}
+            <div class="invalid-feedback">{{ form.start_date.errors.0 }}</div>
+        {% endif %}
+    </div>
+
+    <div class="mb-3">
+        <label for="id_payment_method" class="form-label">Способ оплаты</label>
+        <select name="payment_method" class="form-select {% if form.payment_method.errors %}is-invalid{% endif %}" id="id_payment_method">
+            <option value="">-- Выберите способ оплаты --</option>
+            <option value="bank">Банковский перевод</option>
+            <option value="card">Оплата картой</option>
+            <option value="online">Онлайн оплата</option>
+        </select>
+        {% if form.payment_method.errors %}
+            <div class="invalid-feedback">{{ form.payment_method.errors.0 }}</div>
+        {% endif %}
+    </div>
+
+    <button type="submit" class="btn btn-primary">Отправить заявку</button>
+    <a href="{% url 'cabinet' %}" class="btn btn-secondary">Отмена</a>
+</form>
+{% endblock %}

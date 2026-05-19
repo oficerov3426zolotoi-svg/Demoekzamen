@@ -1,0 +1,32 @@
+{% extends 'courses/base.html' %}
+
+{% block title %}Главная - Учусь.РФ{% endblock %}
+
+{% block content %}
+<div class="text-center py-5">
+    <h1>Добро пожаловать на портал "Учусь.РФ"</h1>
+    <p class="lead">Дистанционное обучение для повышения квалификации</p>
+    
+    {% if not user.is_authenticated %}
+        <div class="mt-4">
+            <a href="{% url 'register' %}" class="btn btn-primary btn-lg">Зарегистрироваться</a>
+            <a href="{% url 'login' %}" class="btn btn-outline-primary btn-lg">Войти</a>
+        </div>
+    {% endif %}
+    
+    <div class="row mt-5">
+        <div class="col-md-4">
+            <h3>Повышение квалификации</h3>
+            <p>Курсы для профессионального роста</p>
+        </div>
+        <div class="col-md-4">
+            <h3>Профессиональная переподготовка</h3>
+            <p>Получение новой специальности</p>
+        </div>
+        <div class="col-md-4">
+            <h3>Охрана труда</h3>
+            <p>Обучение по безопасности труда</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
