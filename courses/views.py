@@ -4,6 +4,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.core.exceptions import ValidationError
+from django.core.paginator import Paginator
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 from .models import Application, Course, Review, UserProfile
 from .forms import RegisterForm, LoginForm, ApplicationForm, ReviewForm
 
@@ -116,22 +119,48 @@ def admin_panel(request):
     admin_password = 'Demo20'
     if request.method == 'POST':
         if request.POST.get('password') == admin_password:
-            applications = Application.objects.all().order_by('-created_at')
-            return render(request, 'courses/admin_panel.html', {'applications': applications})
+            return redirect('admin_applications')
         else:
             messages.error(request, 'Неправильный пароль администратора')
 
     return render(request, 'courses/admin_login.html')
 
 
+@login_required
 def admin_applications(request):
     if not request.user.is_authenticated or request.user.username != 'Admin26':
         return redirect('login')
 
-    applications = Application.objects.all().order_by('-created_at')
-    return render(request, 'courses/admin_panel.html', {'applications': applications})
+    applications = Application.objects.all()
+
+    status_filter = request.GET.get('status', '')
+    course_filter = request.GET.get('course', '')
+    sort_by = request.GET.get('sort', '-created_at')
+
+    if status_filter:
+        applications = applications.filter(status=status_filter)
+
+    if course_filter:
+        applications = applications.filter(course_id=course_filter)
+
+    if sort_by:
+        applications = applications.order_by(sort_by)
+
+    courses = Course.objects.all()
+    paginator = Paginator(applications, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'courses/admin_panel.html', {
+        'page_obj': page_obj,
+        'courses': courses,
+        'status_filter': status_filter,
+        'course_filter': course_filter,
+        'sort_by': sort_by,
+    })
 
 
+@login_required
 def change_status(request, application_id):
     if not request.user.is_authenticated or request.user.username != 'Admin26':
         return redirect('login')

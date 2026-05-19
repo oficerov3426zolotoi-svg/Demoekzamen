@@ -42,6 +42,14 @@ class LoginForm(forms.Form):
 
 
 class ApplicationForm(forms.ModelForm):
+    start_date = forms.DateField(
+        label='Дата начала обучения',
+        widget=forms.DateInput(attrs={
+            'type': 'date',
+            'placeholder': 'ДД.ММ.ГГГГ'
+        })
+    )
+
     class Meta:
         model = Application
         fields = ['course', 'start_date', 'payment_method']
@@ -51,7 +59,8 @@ class ApplicationForm(forms.ModelForm):
             'payment_method': 'Способ оплаты',
         }
         widgets = {
-            'start_date': forms.DateInput(attrs={'type': 'date'}),
+            'course': forms.Select(attrs={'class': 'form-select'}),
+            'payment_method': forms.Select(attrs={'class': 'form-select'}),
         }
 
 
@@ -63,5 +72,5 @@ class ReviewForm(forms.ModelForm):
             'text': 'Отзыв',
         }
         widgets = {
-            'text': forms.Textarea(attrs={'rows': 4}),
+            'text': forms.Textarea(attrs={'rows': 4, 'class': 'form-control'}),
         }
